@@ -1,5 +1,5 @@
 defmodule EntryTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   alias Changelog.Entry
   doctest Changelog.Entry
 

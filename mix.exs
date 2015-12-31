@@ -36,6 +36,7 @@ defmodule Changelog.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
+      {:timex, "~> 1.0"},
       {:earmark, ">= 0.0.0", only: :dev},
       {:ex_doc, ">= 0.0.0", only: :dev}
     ]
