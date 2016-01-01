@@ -1,15 +1,26 @@
 defmodule Changelog.Entry do
-  def new(description), do: "* #{description}"
+  alias Changelog.Entry
 
-  def new_fix(id, link, description), do: "* [##{id}](#{link}) #{description}"
+  defstruct text: "Replace this entry text", indent: 0
 
-  def new_pull_request(id, link, username, user_link, descriptions) when is_list(descriptions) do
-    entries = Enum.map(descriptions, fn(description) -> "    * #{description}" end)
+  def new(text, indent \\ 0)
 
-    ["* [PR ##{id}](#{link}) by [#{username}](#{user_link})" | entries]
+  def new(_, indent) when indent < 0 do
+    raise ArgumentError, message: "Indent cannot be negative"
   end
 
-  def new_pull_request(id, link, username, user_link, description) do
-    "* [PR ##{id}](#{link}) by [#{username}](#{user_link}) - #{description}"
+  def new(nil, _) do
+    raise ArgumentError, message: "Entry text cannot be nil"
+  end
+
+  def new(text, indent) when is_binary(text) do
+    cond do
+      text =~ ~r{^\s*$} -> raise ArgumentError, message: "Entry text cannot be empty or blank"
+      true -> %Entry{text: text, indent: indent}
+    end
+  end
+
+  def new(text, indent) do
+    %Entry{text: text, indent: indent}
   end
 end
