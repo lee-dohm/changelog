@@ -10,6 +10,7 @@ defmodule Changelog.Mixfile do
       elixir: "~> 1.1",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
+      preferred_cli_env: [espec: :test],
       deps: deps,
       docs: docs,
       escript: escript
@@ -37,6 +38,7 @@ defmodule Changelog.Mixfile do
   defp deps do
     [
       {:timex, "~> 1.0"},
+      {:espec, "~> 0.8.7", only: :test},
       {:earmark, ">= 0.0.0", only: :dev},
       {:ex_doc, ">= 0.0.0", only: :dev}
     ]

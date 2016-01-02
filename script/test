@@ -4,4 +4,4 @@ set -e
 cd "$(dirname "$0")/.."
 
 script/update
-mix test $@
+mix espec $@
