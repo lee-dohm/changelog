@@ -9,18 +9,17 @@ defmodule Changelog.Entry do
     raise ArgumentError, message: "Indent cannot be negative"
   end
 
-  def new(nil, _) do
-    raise ArgumentError, message: "Entry text cannot be nil"
-  end
-
-  def new(text, indent) when is_binary(text) do
-    cond do
-      text =~ ~r{^\s*$} -> raise ArgumentError, message: "Entry text cannot be empty or blank"
-      true -> %Entry{text: text, indent: indent}
-    end
-  end
-
   def new(text, indent) do
+    if is_blank(text), do: raise ArgumentError, message: "text cannot be blank"
+
     %Entry{text: text, indent: indent}
+  end
+
+  defp is_blank(text) do
+    cond do
+      is_nil(text)      -> true
+      text =~ ~r{^\s*$} -> true
+      true              -> false
+    end
   end
 end
