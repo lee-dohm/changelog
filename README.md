@@ -1,4 +1,4 @@
-# Changelog Utilitiy
+# Changelog Utility
 
 A command-line utility for easily creating, updating and maintaining a proper change log as described on [Keep a CHANGELOG][changelog].
 
