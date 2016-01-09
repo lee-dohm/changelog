@@ -2,29 +2,39 @@ defmodule EntrySpec do
   use ESpec
   alias Changelog.Entry
 
-  describe "construction" do
-    it "returns a valid record when given description text" do
-      expect(Entry.new("foo")).to eq %Entry{text: "foo", indent: 0}
-    end
+  describe "constructing" do
+    describe "a basic entry" do
+      describe "that is valid" do
+        subject do: Entry.new("foo")
 
-    it "raises an error when given nil for description" do
-      expect(fn -> Entry.new(nil) end).to raise_exception ArgumentError
-    end
+        it do: expect(subject.text).to eq "foo"
+        it do: expect(subject.indent).to eq 0
+      end
 
-    it "raises an error when given an empty string" do
-      expect(fn -> Entry.new("") end).to raise_exception ArgumentError
-    end
+      describe "that is invalid" do
+        it "raises an error when given nil for description" do
+          expect(fn -> Entry.new(nil) end).to raise_exception ArgumentError
+        end
 
-    it "raises an error when given a blank string" do
-      expect(fn -> Entry.new("    ") end).to raise_exception ArgumentError
-    end
+        it "raises an error when given an empty string" do
+          expect(fn -> Entry.new("") end).to raise_exception ArgumentError
+        end
 
-    it "accepts an indentation level" do
-      expect(Entry.new("foo", 2)).to eq %Entry{text: "foo", indent: 2}
-    end
+        it "raises an error when given a blank string" do
+          expect(fn -> Entry.new("    ") end).to raise_exception ArgumentError
+        end
+      end
 
-    it "raises an error when indentation is negative" do
-      expect(fn -> Entry.new("foo", -1) end).to raise_exception ArgumentError
+      describe "with an indentation level" do
+        subject do: Entry.new("foo", 2)
+
+        it do: expect(subject.text).to eq "foo"
+        it do: expect(subject.indent).to eq 2
+
+        it "raises an error when indentation is negative" do
+          expect(fn -> Entry.new("foo", -1) end).to raise_exception ArgumentError
+        end
+      end
     end
   end
 end
