@@ -3,6 +3,9 @@ defmodule Changelog.GitHub do
   Utilities for working with GitHub projects.
   """
 
+  @typedoc "Git remote name or URL"
+  @type remote_or_url :: atom | binary
+
   @doc """
   Determines the GitHub URL for the given remote or repository identifier.
 
@@ -12,8 +15,11 @@ defmodule Changelog.GitHub do
   * GitHub-style `user/repo` specification &mdash; `lee-dohm/changelog`
   * HTTPS clone URL &mdash; `https://github.com/lee-dohm/changelog.git`
   * SSH clone URL &mdash; `git@github.com:lee-dohm/changelog.git`
-  * Remote name as an atom &mdash; `:origin`
+  * Git remote name as an atom &mdash; `:origin`
+
+  Returns the base GitHub URL associated with the remote or repository.
   """
+  @spec url(remote_or_url) :: binary | no_return
   def url(remote \\ :origin)
 
   def url(nil), do: raise ArgumentError, message: "Remote specification cannot be nil, see documentation for acceptable forms"
