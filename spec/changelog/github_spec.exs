@@ -35,5 +35,9 @@ defmodule GitHubSpec do
     it "returns the repository URL when given the user/repo name" do
       expect(GitHub.url("lee-dohm/changelog")).to eq url
     end
+
+    it "returns the repository URL when given :origin" do
+      expect(GitHub.url(:origin)).to eq url
+    end
   end
 end

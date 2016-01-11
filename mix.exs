@@ -37,6 +37,7 @@ defmodule Changelog.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
+      {:git_cli, "~> 0.1.0"},
       {:timex, "~> 1.0"},
       {:espec, "~> 0.8.7", only: :test},
       {:earmark, ">= 0.0.0", only: :dev},
