@@ -6,6 +6,17 @@ defmodule Changelog.GitHub do
   @typedoc "Git remote name or URL"
   @type remote_or_url :: atom | binary
 
+  def issue_url(number, remote \\ :origin)
+
+  def issue_url(nil, _), do: raise ArgumentError, message: "Issue number cannot be nil"
+  def issue_url(number, remote) when is_integer(number), do: issue_url(Integer.to_string(number), remote)
+
+  def issue_url(number, remote) do
+    validate_issue_number!(number)
+
+    "#{url(remote)}/issues/#{String.replace_leading(number, "#", "")}"
+  end
+
   @doc """
   Determines the GitHub URL for the given remote or repository identifier.
 
@@ -57,5 +68,12 @@ defmodule Changelog.GitHub do
     {:ok, path} = Git.rev_parse(%Git.Repository{path: System.cwd}, ["--show-toplevel"])
 
     %Git.Repository{path: String.strip(path)}
+  end
+
+  defp validate_issue_number!(number) do
+    number = String.replace_leading(number, "#", "")
+             |> String.to_integer
+
+    if number < 1, do: raise ArgumentError, message: "Issue number cannot be less than 1"
   end
 end

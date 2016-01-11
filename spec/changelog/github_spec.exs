@@ -3,10 +3,37 @@ defmodule GitHubSpec do
 
   alias Changelog.GitHub
 
+  let :url, do: "https://github.com/lee-dohm/changelog"
+
+  describe "issue_url" do
+    it "raises an error when given nil" do
+      expect(fn -> GitHub.issue_url(nil) end).to raise_exception ArgumentError
+    end
+
+    it "raises an error when given zero" do
+      expect(fn -> GitHub.issue_url(0) end).to raise_exception ArgumentError
+    end
+
+    it "raises an error when given a negative number" do
+      expect(fn -> GitHub.issue_url(-5) end).to raise_exception ArgumentError
+    end
+
+    it "returns the Issue URL when given a valid issue number" do
+      expect(GitHub.issue_url(42)).to eq "#{url}/issues/42"
+    end
+
+    it "returns the Issue URL when given a valid issue number as string" do
+      expect(GitHub.issue_url("42")).to eq "#{url}/issues/42"
+    end
+
+    it "returns the Issue URL when given a valid issue number with leading hash mark" do
+      expect(GitHub.issue_url("#42")).to eq "#{url}/issues/42"
+    end
+  end
+
   describe "url" do
     let :https_remote, do: "https://github.com/lee-dohm/changelog.git"
     let :ssh_remote, do: "git@github.com:lee-dohm/changelog.git"
-    let :url, do: "https://github.com/lee-dohm/changelog"
 
     it "raises an error when given nil" do
       expect(fn -> GitHub.url(nil) end).to raise_exception ArgumentError
