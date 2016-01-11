@@ -3,19 +3,35 @@ defmodule Changelog.GitHub do
   Utilities for working with GitHub projects.
   """
 
+  @typedoc "GitHub Issue or Pull Request number"
+  @type issue_number :: pos_integer | binary
+
   @typedoc "Git remote name or URL"
   @type remote_or_url :: atom | binary
 
+  @doc """
+  Determines the GitHub Issue URL from the number and remote or repository identifier.
+
+  See `url/1` for the list of acceptable forms for the remote or repository identifier.
+  """
+  @spec issue_url(issue_number, remote_or_url) :: binary | no_return
   def issue_url(number, remote \\ :origin)
 
   def issue_url(nil, _), do: raise ArgumentError, message: "Issue number cannot be nil"
   def issue_url(number, remote) when is_integer(number), do: issue_url(Integer.to_string(number), remote)
+  def issue_url(number, remote), do: format_issue_url(number, remote, "issues")
 
-  def issue_url(number, remote) do
-    validate_issue_number!(number)
+  @doc """
+  Determines the GitHub PR URL from the number and remote or repository identifier.
 
-    "#{url(remote)}/issues/#{String.replace_leading(number, "#", "")}"
-  end
+  See `url/1` for the list of acceptable forms for the remote or repository identifier.
+  """
+  @spec pull_url(issue_number, remote_or_url) :: binary | no_return
+  def pull_url(number, remote \\ :origin)
+
+  def pull_url(nil, _), do: raise ArgumentError, message: "Pull request number cannot be nil"
+  def pull_url(number, remote) when is_integer(number), do: pull_url(Integer.to_string(number), remote)
+  def pull_url(number, remote), do: format_issue_url(number, remote, "pull")
 
   @doc """
   Determines the GitHub URL for the given remote or repository identifier.
@@ -37,7 +53,13 @@ defmodule Changelog.GitHub do
   def url(remote) when is_atom(remote), do: resolve_remote(remote) |> parse_remote
   def url(text) when is_binary(text), do: parse_remote(text)
 
-  defp construct_url(captures), do: "https://github.com/#{captures["user"]}/#{captures["repo"]}"
+  defp format_base_url(captures), do: "https://github.com/#{captures["user"]}/#{captures["repo"]}"
+
+  defp format_issue_url(number, remote, issue_text) do
+    validate_issue_number!(number)
+
+    "#{url(remote)}/#{issue_text}/#{String.replace_leading(number, "#", "")}"
+  end
 
   @https_regex ~r{https://github.com/(?<user>[^/]+)/(?<repo>[^/.]+)(.git)?}
   @ssh_regex ~r{git@github.com:(?<user>[^/]+)/(?<repo>[^/.]+).git}
@@ -45,9 +67,9 @@ defmodule Changelog.GitHub do
 
   defp parse_remote(text) do
     cond do
-      captures = Regex.named_captures(@https_regex, text) -> construct_url(captures)
-      captures = Regex.named_captures(@ssh_regex, text) -> construct_url(captures)
-      captures = Regex.named_captures(@user_repo_regex, text) -> construct_url(captures)
+      captures = Regex.named_captures(@https_regex, text) -> format_base_url(captures)
+      captures = Regex.named_captures(@ssh_regex, text) -> format_base_url(captures)
+      captures = Regex.named_captures(@user_repo_regex, text) -> format_base_url(captures)
       true -> raise ArgumentError, message: "Invalid remote specification, see documentation for acceptable forms"
     end
   end
